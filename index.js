@@ -16,6 +16,7 @@ const run =  async ()=>{
     try{
         const categoryCollection = client.db('bestMobileZone').collection('mobileCategories');
         const allPhonesCollection = client.db('bestMobileZone').collection('allMobilePhones');
+        const allAddedProductsCollection = client.db('bestMobileZone').collection('addedProducts');
         
         //get categories data from database. 
         app.get('/categories', async(req, res)=>{
@@ -33,6 +34,16 @@ const run =  async ()=>{
             const result = await allPhonesCollection.find(query).toArray();
             res.send(result);
         })
+        
+        // post add products from database.
+        app.post('/addedProducts', async(req, res)=>{
+            const query = req.body;
+            const product = await allAddedProductsCollection.insertOne(query);
+            res.send(product);
+        })
+        
+
+
 
     }
     finally{
