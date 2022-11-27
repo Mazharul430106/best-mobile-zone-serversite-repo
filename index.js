@@ -68,7 +68,13 @@ const run =  async ()=>{
             res.send(advertiseGetItems);
         })
 
-
+        // delete advertise data from database.
+        app.delete('/advertise/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const advertiseRemoveItem = await advertiseProductsCollection.deleteOne(query);
+            res.send(advertiseRemoveItem);
+        })
 
     }
     finally{
