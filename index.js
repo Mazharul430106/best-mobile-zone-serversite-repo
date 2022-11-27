@@ -14,9 +14,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 const run =  async ()=>{
     try{
+
         const categoryCollection = client.db('bestMobileZone').collection('mobileCategories');
         const allPhonesCollection = client.db('bestMobileZone').collection('allMobilePhones');
         const allAddedProductsCollection = client.db('bestMobileZone').collection('addedProducts');
+        const advertiseProductsCollection = client.db('bestMobileZone').collection('advertiseProducts');
         
         //get categories data from database. 
         app.get('/categories', async(req, res)=>{
@@ -41,7 +43,23 @@ const run =  async ()=>{
             const product = await allAddedProductsCollection.insertOne(query);
             res.send(product);
         })
+
+        // get products data from database.
+        app.get('/products', async(req, res)=>{
+            const email = req.query.email;
+            const query = {
+                email: email
+            }
+            const products = await allAddedProductsCollection.find(query).toArray();
+            res.send(products);
+        })
         
+        // post advertise data from database.
+        app.post('/advertise', async (req, res)=>{
+            const query = req.body;
+            const advertise = await advertiseProductsCollection.insertOne(query);
+            res.send(advertise);
+        })
 
 
 
