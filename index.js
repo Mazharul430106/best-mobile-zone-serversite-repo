@@ -87,9 +87,6 @@ run().catch(error=> {
 })
 
 
-
-
-
 app.get('/', (req, res) => {
   res.send('Mobile Zone Server is Running')
 })
