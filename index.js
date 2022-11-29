@@ -19,6 +19,7 @@ const run =  async ()=>{
         const allPhonesCollection = client.db('bestMobileZone').collection('allMobilePhones');
         const allAddedProductsCollection = client.db('bestMobileZone').collection('addedProducts');
         const advertiseProductsCollection = client.db('bestMobileZone').collection('advertiseProducts');
+        const userBookingProductsCollection = client.db('bestMobileZone').collection('userBookingsData');
         
         //get categories data from database. 
         app.get('/categories', async(req, res)=>{
@@ -75,6 +76,24 @@ const run =  async ()=>{
             const advertiseRemoveItem = await advertiseProductsCollection.deleteOne(query);
             res.send(advertiseRemoveItem);
         })
+
+        // added user booking phones.
+        app.post('/bookingPhones', async(req, res)=>{
+            const query = req.body;
+            const bookingsData = await userBookingProductsCollection.insertOne(query);
+            res.send(bookingsData);
+        })
+
+        // added get booking phones 
+        app.get('/bookingPhones', async (req, res)=>{
+            const email = req.query.email
+            const query = {
+                email: email
+            }
+            const getBookingData = await userBookingProductsCollection.find(query).toArray();
+            res.send(getBookingData);
+        })
+
 
     }
     finally{
