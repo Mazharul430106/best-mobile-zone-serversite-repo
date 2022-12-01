@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -20,6 +21,7 @@ const run =  async ()=>{
         const allAddedProductsCollection = client.db('bestMobileZone').collection('addedProducts');
         const advertiseProductsCollection = client.db('bestMobileZone').collection('advertiseProducts');
         const userBookingProductsCollection = client.db('bestMobileZone').collection('userBookingsData');
+        const usersCollection = client.db('bestMobileZone').collection('users');
         
         //get categories data from database. 
         app.get('/categories', async(req, res)=>{
@@ -87,6 +89,7 @@ const run =  async ()=>{
         // added get booking phones 
         app.get('/bookingPhones', async (req, res)=>{
             const email = req.query.email
+           console.log(req.headers.authorization)
             const query = {
                 email: email
             }
@@ -94,6 +97,64 @@ const run =  async ()=>{
             res.send(getBookingData);
         })
 
+        // jwt token 
+        app.get('/jwt', async(req, res)=>{
+            const email = req.query.email;
+            const query = { email: email }
+            const user = await usersCollection.findOne(query);
+            if(user){
+                const token = jwt.sign({email}, process.env.ACCESS_TOKEN, {expiresIn: '7d'})
+                return res.send({accessToken: token})
+            }
+            res.status(403).send({accessToken: ''})
+        })
+
+        //added all users in database.
+        app.post('/users', async(req, res)=>{
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
+
+
+        // get all users from database 
+        app.get('/users', async(req, res)=>{
+            const query = {}
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        })
+
+        // admin checking 
+        app.get('/users/admin/:email', async(req, res)=> {
+            const email = req.params.email;
+            const query = {email: email}
+            const user = await usersCollection.findOne(query);
+            res.send({isAdmin: user?.role === 'admin'});
+        })
+
+        // user checking 
+        app.get('/users/user/:email', async (req, res)=>{
+            const email = req.params.email;
+            const query = {email : email};
+            const user = await usersCollection.findOne(query);
+            res.send({isUser: user?.role === 'user'})
+        })
+
+        // seller checking 
+        app.get('/users/seller/:email', async(req, res)=>{
+            const email = req.params.email;
+            const query = {email: email};
+            const user = await usersCollection.findOne(query);
+            res.send({isSeller : user?.role === 'seller'})
+        })
+
+        // delete users from database 
+        app.delete('/users/:id', async (req, res)=>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const result = await usersCollection.deleteOne(query);
+            res.send(result)
+        })
 
     }
     finally{
