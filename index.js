@@ -18,7 +18,7 @@ const run =  async ()=>{
 
         const categoryCollection = client.db('bestMobileZone').collection('mobileCategories');
         const allPhonesCollection = client.db('bestMobileZone').collection('allMobilePhones');
-        const allAddedProductsCollection = client.db('bestMobileZone').collection('addedProducts');
+        // const allAddedProductsCollection = client.db('bestMobileZone').collection('addedProducts');
         const advertiseProductsCollection = client.db('bestMobileZone').collection('advertiseProducts');
         const userBookingProductsCollection = client.db('bestMobileZone').collection('userBookingsData');
         const usersCollection = client.db('bestMobileZone').collection('users');
@@ -41,9 +41,9 @@ const run =  async ()=>{
         })
         
         // post add products from database.
-        app.post('/addedProducts', async(req, res)=>{
+        app.post('/allMobilePhones', async(req, res)=>{
             const query = req.body;
-            const product = await allAddedProductsCollection.insertOne(query);
+            const product = await allPhonesCollection.insertOne(query);
             res.send(product);
         })
 
@@ -53,7 +53,7 @@ const run =  async ()=>{
             const query = {
                 email: email
             }
-            const products = await allAddedProductsCollection.find(query).toArray();
+            const products = await allPhonesCollection.find(query).toArray();
             res.send(products);
         })
         
