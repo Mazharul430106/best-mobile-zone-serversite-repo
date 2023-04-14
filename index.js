@@ -22,6 +22,7 @@ const run =  async ()=>{
         const advertiseProductsCollection = client.db('bestMobileZone').collection('advertiseProducts');
         const userBookingProductsCollection = client.db('bestMobileZone').collection('userBookingsData');
         const usersCollection = client.db('bestMobileZone').collection('users');
+        const reviewsCollection = client.db('bestMobileZone').collection('serviceReviews');
         
         //get categories data from database. 
         app.get('/categories', async(req, res)=>{
@@ -71,13 +72,29 @@ const run =  async ()=>{
             res.send(advertiseGetItems);
         })
 
-        // delete advertise data from database.
-        app.delete('/advertise/:id', async(req, res)=> {
-            const id = req.params.id;
-            const query = {_id: ObjectId(id)};
-            const advertiseRemoveItem = await advertiseProductsCollection.deleteOne(query);
-            res.send(advertiseRemoveItem);
+        // post service reviews data form database.
+        app.post('/reviews', async(req, res)=>{
+            const userReview = req.body;
+            const result = await reviewsCollection.insertOne(userReview);
+            res.send(result)
         })
+
+        // get service reviews data form database. 
+
+        app.get('/reviews', async(req, res)=>{
+            const query = {}
+            const reviews = await reviewsCollection.find(query).toArray();
+            res.send(reviews)
+        })
+
+
+        // delete advertise data from database.
+        // app.delete('/advertise/:id', async(req, res)=> {
+        //     const id = req.params.id;
+        //     const query = {_id: ObjectId(id)};
+        //     const advertiseRemoveItem = await advertiseProductsCollection.deleteOne(query);
+        //     res.send(advertiseRemoveItem);
+        // })
 
         // added user booking phones.
         app.post('/bookingPhones', async(req, res)=>{
@@ -151,7 +168,7 @@ const run =  async ()=>{
         // delete users from database 
         app.delete('/users/:id', async (req, res)=>{
             const id = req.params.id;
-            const query = {_id: ObjectId(id)}
+            const query = {_id: new ObjectId(id)}
             const result = await usersCollection.deleteOne(query);
             res.send(result)
         })
