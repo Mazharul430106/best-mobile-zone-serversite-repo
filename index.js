@@ -3,10 +3,10 @@ const app = express();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5005;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
-app.use(cors());
+app.use(cors);
 app.use(express.json());
 
 
@@ -86,6 +86,16 @@ const run =  async ()=>{
             const reviews = await reviewsCollection.find(query).toArray();
             res.send(reviews)
         })
+
+
+        // app.get('/reviews', async(req, res)=>{
+        //     const query = {};
+        //     const result = await reviewsCollection.find(query).toArray();
+        //     res.send(result);
+        // })
+
+
+
 
 
         // delete advertise data from database.
